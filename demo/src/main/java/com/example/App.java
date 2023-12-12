@@ -24,6 +24,12 @@ public class App {
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 PrintWriter out = new PrintWriter(s.getOutputStream());
 
+                String richiesta = in.readLine();
+                String riga[] = richiesta.split(" ");
+                String path = riga[1];
+                path = path.substring(1);
+                System.out.println("----" + path + "----");
+
                 do {
                     String line = in.readLine();
                     System.out.println(line);
@@ -31,7 +37,22 @@ public class App {
                         break;
                 } while (true);
 
-                sendFile(out);
+                String it[] = path.split("\\.");
+
+                String file = it[3];
+
+                if(file.equals("html")){
+                    sendHTML(out);
+                }
+
+                if(file.equals("jpeg")){
+                    sendJPEG(out);
+                }
+
+                if(file.equals("css")){
+                    sendCSS(out);
+                }
+                
 
                 out.flush();
                 s.close();
@@ -46,7 +67,7 @@ public class App {
     }
 
 
-    public static void sendFile(PrintWriter out){
+    public static void sendHTML(PrintWriter out){
 
         try{
             File myObject = new File("test.html");
@@ -66,7 +87,56 @@ public class App {
             }
             reader.close();
         } catch(FileNotFoundException e){
-        out.println("HTTP/1.1 404 OK");
+            out.println("HTTP/1.1 404 NON OK");
+        }
+    }
+
+
+     public static void sendJPEG(PrintWriter out){
+
+        try{
+            File myObject = new File(".jpeg");
+            Scanner reader = new Scanner(myObject);
+            
+            out.println("HTTP/1.1 200 OK");
+            out.println("Content-Lenght: " + myObject.length());
+            out.println("Server: Java HTTP Server from Pingu: 1.0");
+            out.println("Date: " + new Date());
+            out.println("Content-Type: image/jpeg; charset=utf-8");
+            
+            out.println();
+
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                out.println(data);
+            }
+            reader.close();
+        } catch(FileNotFoundException e){
+            out.println("HTTP/1.1 404 NON OK");
+        }
+    }
+
+     public static void sendCSS(PrintWriter out){
+
+        try{
+            File myObject = new File("style.css");
+            Scanner reader = new Scanner(myObject);
+            
+            out.println("HTTP/1.1 200 OK");
+            out.println("Content-Lenght: " + myObject.length());
+            out.println("Server: Java HTTP Server from Pingu: 1.0");
+            out.println("Date: " + new Date());
+            out.println("Content-Type: text/css; charset=utf-8");
+            
+            out.println();
+
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                out.println(data);
+            }
+            reader.close();
+        } catch(FileNotFoundException e){
+            out.println("HTTP/1.1 404 NON OK");
         }
     }
 }
